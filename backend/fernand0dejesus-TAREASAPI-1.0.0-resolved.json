@@ -1,0 +1,749 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "To-Do API",
+    "description": "API para la gestión de tareas - Sistema completo de administración de tareas pendientes",
+    "contact": {
+      "name": "Tu Nombre",
+      "email": "tu.email@ejemplo.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/fernand0dejesus/TAREASAPI/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "https://api.mi-todo-app.com/v1",
+      "description": "Servidor de producción"
+    },
+    {
+      "url": "https://api-dev.mi-todo-app.com/v1",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Tareas",
+      "description": "Operaciones relacionadas con la gestión de tareas"
+    }
+  ],
+  "paths": {
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Obtener todas las tareas",
+        "description": "Retorna la lista completa de tareas registradas en el sistema",
+        "operationId": "getAllTasks",
+        "parameters": [
+          {
+            "name": "completed",
+            "in": "query",
+            "description": "Filtrar tareas por estado de completitud",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Número máximo de tareas a retornar",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Número de tareas a omitir (para paginación)",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tareas obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Actualizar tarea existente",
+        "description": "Actualiza una tarea existente mediante su ID",
+        "operationId": "updateTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID único de la tarea a actualizar",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea actualizada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Crear nueva tarea",
+        "description": "Crea una nueva tarea en el sistema",
+        "operationId": "createTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Tarea creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_201"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Eliminar tarea",
+        "description": "Elimina una tarea del sistema mediante su ID",
+        "operationId": "deleteTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID único de la tarea a eliminar",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea eliminada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}": {
+      "get": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Obtener tarea por ID",
+        "description": "Retorna una tarea específica mediante su ID único",
+        "operationId": "getTaskById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID único de la tarea",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea encontrada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}/toggle": {
+      "patch": {
+        "tags": [
+          "Tareas"
+        ],
+        "summary": "Alternar estado de completitud",
+        "description": "Cambia el estado de completitud de una tarea (completada/pendiente)",
+        "operationId": "toggleTaskCompletion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID único de la tarea",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estado de la tarea actualizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_4"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TaskCreate": {
+        "required": [
+          "description",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 50,
+            "minLength": 3,
+            "type": "string",
+            "description": "Título de la tarea",
+            "example": "Completar documentación API"
+          },
+          "description": {
+            "maxLength": 200,
+            "minLength": 5,
+            "type": "string",
+            "description": "Descripción detallada de la tarea",
+            "example": "Crear documentación OpenAPI completa para el sistema de tareas"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Prioridad de la tarea",
+            "default": "medium",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Fecha límite para completar la tarea",
+            "format": "date-time",
+            "example": "2024-12-31T23:59:59Z"
+          }
+        }
+      },
+      "TaskUpdate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 50,
+            "minLength": 3,
+            "type": "string",
+            "description": "Título de la tarea",
+            "example": "Completar documentación API - Actualizada"
+          },
+          "description": {
+            "maxLength": 200,
+            "minLength": 5,
+            "type": "string",
+            "description": "Descripción detallada de la tarea",
+            "example": "Crear documentación OpenAPI completa y ejemplos de uso"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "Estado de completitud de la tarea",
+            "example": false
+          },
+          "priority": {
+            "type": "string",
+            "description": "Prioridad de la tarea",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Fecha límite para completar la tarea",
+            "format": "date-time"
+          }
+        }
+      },
+      "TaskResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único de la tarea",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "title": {
+            "type": "string",
+            "description": "Título de la tarea",
+            "example": "Completar documentación API"
+          },
+          "description": {
+            "type": "string",
+            "description": "Descripción detallada de la tarea",
+            "example": "Crear documentación OpenAPI completa para el sistema de tareas"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "Estado de completitud de la tarea",
+            "example": false
+          },
+          "priority": {
+            "type": "string",
+            "description": "Prioridad de la tarea",
+            "example": "high",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Fecha límite para completar la tarea",
+            "format": "date-time",
+            "example": "2024-12-31T23:59:59Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Fecha de creación de la tarea",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Fecha de última actualización",
+            "format": "date-time",
+            "example": "2024-01-16T14:45:00Z"
+          }
+        }
+      },
+      "PaginationInfo": {
+        "type": "object",
+        "properties": {
+          "currentPage": {
+            "type": "integer",
+            "example": 1
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 5
+          },
+          "totalItems": {
+            "type": "integer",
+            "example": 47
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "example": 10
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "Recurso no encontrado"
+          },
+          "message": {
+            "type": "string",
+            "example": "La tarea con el ID especificado no existe"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "Error de validación"
+          },
+          "message": {
+            "type": "string",
+            "example": "Los datos proporcionados no son válidos"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationErrorResponse_details"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskResponse"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          }
+        }
+      },
+      "inline_response_200_1": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Tarea actualizada exitosamente"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskResponse"
+          }
+        }
+      },
+      "inline_response_201": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Tarea creada exitosamente"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskResponse"
+          }
+        }
+      },
+      "inline_response_200_2": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Tarea eliminada exitosamente"
+          }
+        }
+      },
+      "inline_response_200_3": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskResponse"
+          }
+        }
+      },
+      "inline_response_200_4": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Estado de la tarea actualizado"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskResponse"
+          }
+        }
+      },
+      "ValidationErrorResponse_details": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "title"
+          },
+          "message": {
+            "type": "string",
+            "example": "El título debe tener entre 3 y 50 caracteres"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "Token JWT para autenticación",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
